@@ -1,142 +1,417 @@
-# Oracle Solution Design Workflow
+# Workflow: Oracle Solution Design
 
-> Orchestrates a complete OCI solution design through 5 phases with quality gates.
+## Purpose
+Orchestrate a complete OCI solution design through 5 phases — from discovery to customer-ready deliverables. Each phase has concrete steps and quality gates.
 
-## Overview
-
-This workflow guides the creation of a customer-facing solution design. It follows the DISCOVER > ARCHITECT > VISUALIZE > PROTOTYPE > DELIVER pipeline, with mandatory quality gates between phases.
+## When to Use
+- Customer engagement requires a solution design / architecture recommendation
+- Building an SDD (Solution Design Document) for an OCI-based solution
+- Need prototype + visuals + BOM for a customer presentation
 
 ## Prerequisites
-
-- Customer context provided in conversation (codename only, never real names)
-- Access to oracle.com/cloud/price-list/ for pricing verification
-- Nano Banana or equivalent for architecture diagram generation
+- Customer context provided using codename (NEVER real names)
+- OCI tenancy/region known (or to be determined)
 
 ---
 
 ## Phase 1: DISCOVER
 
-Research the problem space. Gather enough information to design the solution.
+### 1.1 Capture Requirements
 
-### Steps
+Create `clients/[CODE]/deliverables/docs/DISCOVERY.md`:
 
-1. **Identify core use cases** — Ask user for top 3 business requirements
-2. **Research OCI services** — Check docs.oracle.com/iaas/ for relevant services
-3. **Check existing patterns** — Search github.com/oracle-quickstart and OCI AI Blueprints
-4. **Identify constraints** — Compliance, timeline, budget, data residency
-5. **Industry context** — Research relevant industry AI patterns and benchmarks
+```markdown
+# Discovery: [Solution Name]
+## Codename: [CODE]
+## Date: [YYYY-MM-DD]
+
+## Business Context
+- **Problem**: [What pain exists today?]
+- **Current State**: [What tools/processes in use?]
+- **Success Criteria**: [What does good look like?]
+
+## Top Use Cases
+| # | Use Case | Priority | Data Sources | Expected Output |
+|---|----------|----------|-------------|-----------------|
+| 1 | | High | | |
+| 2 | | High | | |
+| 3 | | Medium | | |
+
+## Constraints
+| Constraint | Value | Impact |
+|-----------|-------|--------|
+| Compliance | [GDPR/HIPAA/SOC2/None] | [Affects region + encryption] |
+| Timeline | [Weeks/months] | [Affects tier recommendation] |
+| Budget | [Range or TBD] | [Affects tier recommendation] |
+| Data Residency | [EU/US/Any] | [Affects model + region choice] |
+| Existing Cloud | [OCI/AWS/Azure/None] | [Affects integration pattern] |
+
+## Stakeholders
+| Role | Concern | Communication |
+|------|---------|---------------|
+| Executive Sponsor | ROI, timeline | Monthly summary |
+| Technical Lead | Integration, security | Weekly detail |
+| End Users | Usability, speed | Demo at Phase 4 |
+```
+
+### 1.2 Research OCI Capabilities
+
+Search for matching OCI services and existing patterns:
+
+```bash
+# Check if OCI AI Blueprints covers this use case
+# Visit: https://github.com/oracle-quickstart/oci-ai-blueprints
+
+# Check oracle-quickstart for Terraform modules
+# Visit: https://github.com/oracle-quickstart
+
+# Check oracle-devrel for solution patterns
+# Visit: https://github.com/oracle-devrel/technology-engineering
+```
+
+**OCI AI Blueprints Decision Tree:**
+```
+Customer needs GenAI on OCI?
+├── Standard LLM inference (Llama, Mistral)?
+│   └── USE: AI Blueprints - vLLM or Llama Stack
+├── Fine-tuning required?
+│   └── USE: AI Blueprints - LoRA Fine-Tuning
+├── Route optimization?
+│   └── USE: AI Accelerator Pack - cuOPT
+├── Video analysis?
+│   └── USE: AI Accelerator Pack - VSS
+├── Enterprise reasoning agent?
+│   └── USE: AI Accelerator Pack - AI-Q
+├── OCI GenAI Service (managed)?
+│   └── USE: Cohere/Llama/Grok/Gemini endpoints
+└── Custom/unique requirements?
+    └── THEN: Build custom with oracle-devrel patterns
+```
+
+### 1.3 Model Selection
+
+Use this matrix when the solution involves GenAI:
+
+| Use Case | PRIMARY Model | Alternative | Why |
+|----------|---------------|-------------|-----|
+| Complex Reasoning | Cohere Command A Reasoning | Gemini 2.5 Pro | Multi-step logic |
+| Multimodal (Images+Text) | Cohere Command A Vision | Llama 3.2 90B Vision | Charts, docs |
+| Agentic Workflows | Llama 4 Maverick | Grok 4.1 Fast | Tool-calling, MoE |
+| Coding | Grok Code Fast 1 | Llama 4 Maverick | Code specialist |
+| RAG / Retrieval | Cohere Command R (08-2024) | Cohere Command A | 128K, retrieval-optimized |
+| Embeddings | Cohere Embed 4 (multimodal) | Embed Multilingual 3 | Text + image |
+| Reranking | Cohere Rerank 3.5 | - | Relevance scoring |
+| Speed/Cost | Gemini 2.5 Flash-Lite | Grok 3 Mini Fast | High-volume |
+| EU Data Residency | Cohere Command A series | - | EU OCI regions |
+| Long Context (2M) | Grok 4.1 Fast | Gemini 2.5 Pro | Massive documents |
+| Fine-tuning | Llama 3.3 70B | Cohere Command | Dedicated AI Clusters |
+
+**Model Selection Decision:**
+1. Data residency required? -> Cohere (EU deployable)
+2. Fine-tuning needed? -> Llama (LoRA) or Cohere (T-few)
+3. Multimodal? -> Cohere Vision, Llama Vision, or Gemini
+4. Coding focus? -> Grok Code Fast 1
+5. Budget constrained? -> Flash-Lite or Mini Fast
+6. Agentic/tool-calling? -> Llama 4 or Grok 4.1 Fast
 
 ### Quality Gate 1
-Before moving to Phase 2, confirm:
-- [ ] Top 3 use cases documented
-- [ ] OCI services mapped to requirements
-- [ ] Constraints captured (compliance, timeline, budget)
-- [ ] Existing OCI patterns checked
-- [ ] No real customer names in any output
+- [ ] Top 3 use cases documented with priorities
+- [ ] OCI services mapped to each use case
+- [ ] Constraints captured (compliance, timeline, budget, residency)
+- [ ] AI Blueprints / oracle-quickstart checked
+- [ ] GenAI model selection justified (if applicable)
+- [ ] No real customer names in ANY file
 
 ---
 
 ## Phase 2: ARCHITECT
 
-Design the technical architecture with OCI service selection.
+### 2.1 Service Selection
 
-### Steps
+Create a service selection table with rationale:
 
-1. **Select OCI services** — Use the OCI GenAI Model Selection Matrix for AI workloads
-2. **Design architecture tiers** — Basic / Advanced / Premium with clear differentiation
-3. **Map data flow** — Ingestion > Processing > Storage > Retrieval > Presentation
-4. **Security architecture** — IAM, encryption, network isolation, compliance mapping
-5. **Verify pricing** — Every service price confirmed at oracle.com/cloud/price-list/
-6. **Generate SDD** — Use the SDD template to create SOLUTION-DESIGN.md
+```markdown
+## OCI Service Selection
 
-### Mandatory Checks
-- Does an OCI AI Blueprint already cover this? (Check github.com/oracle-quickstart/oci-ai-blueprints)
-- Are pricing claims model-specific? (Never say "X times cheaper" without comparison)
-- Are services available in the target OCI region?
+| Service | Purpose | Why This Service | Alternative Considered | Docs |
+|---------|---------|-----------------|----------------------|------|
+| OCI GenAI | LLM inference | Managed, pay-per-token | Self-hosted vLLM | [docs](https://docs.oracle.com/iaas/Content/generative-ai/) |
+| Oracle AI Database 26ai | Vector + relational | HNSW index, Select AI Agent | Standalone vector DB | [docs](https://docs.oracle.com/en/database/oracle/oracle-database/26/) |
+| OKE | Container orchestration | GPU scheduling, AI Blueprints | VM-based deployment | [docs](https://docs.oracle.com/iaas/Content/ContEng/) |
+| Object Storage | Data lake | S3-compatible, tiered | Block Storage | [docs](https://docs.oracle.com/iaas/Content/Object/) |
+```
+
+### 2.2 Architecture Tiers
+
+Define 3 tiers (every solution needs this):
+
+```markdown
+## Architecture Tiers
+
+| Aspect | Basic | Advanced | Premium |
+|--------|-------|----------|---------|
+| Users | < 50 | 50-500 | 500+ |
+| Data Volume | < 100 GB | 100 GB - 1 TB | 1+ TB |
+| AI Models | OCI GenAI (shared) | OCI GenAI (dedicated) | DAC + fine-tuned |
+| Availability | 99.5% | 99.9% | 99.95% |
+| Vector Search | Basic HNSW | Hybrid (vector + keyword) | GraphRAG + reranking |
+| Agents | Single agent | Multi-agent, tool-calling | Autonomous orchestration |
+| Support | Standard | Business | Enterprise |
+| Monthly Est. | $X,XXX | $XX,XXX | $XXX,XXX |
+```
+
+### 2.3 Security Architecture
+
+```markdown
+## Security Architecture
+
+### IAM
+- Compartment isolation per workload
+- Dynamic groups for OCI service-to-service auth
+- Federated identity (SAML/OIDC) for user access
+
+### Encryption
+- At rest: Oracle-managed or customer-managed keys (OCI Vault)
+- In transit: TLS 1.3 for all endpoints
+- Database: Transparent Data Encryption (TDE)
+
+### Network
+- Private subnets for all AI workloads
+- Service Gateway for OCI service access (no internet)
+- Network Security Groups (NSGs) per service tier
+- WAF for public-facing endpoints
+
+### Compliance Mapping
+| Requirement | OCI Control | Evidence |
+|------------|-------------|---------|
+| Data encryption at rest | TDE + OCI Vault | Audit logs |
+| Access control | IAM policies + MFA | IAM audit trail |
+| Network isolation | Private subnets + NSG | VCN flow logs |
+| Data residency | Region selection | Tenancy config |
+```
+
+### 2.4 Pricing (BOM)
+
+**MANDATORY:** Verify ALL prices at https://www.oracle.com/cloud/price-list/
+
+```markdown
+## Bill of Materials
+
+**Prices verified on: [DATE] at oracle.com/cloud/price-list/**
+
+### Basic Tier
+| Service | Shape/Config | Qty | Monthly ($) | Annual ($) | Source |
+|---------|-------------|-----|-------------|------------|--------|
+| OCI GenAI | [Model] on-demand | [tokens/mo] | $[VERIFIED] | $[VERIFIED] | price-list |
+| Autonomous DB | [OCPU] BYOL/License | 1 | $[VERIFIED] | $[VERIFIED] | price-list |
+| Object Storage | [GB] Standard | 1 | $[VERIFIED] | $[VERIFIED] | price-list |
+| Compute | [Shape] | [count] | $[VERIFIED] | $[VERIFIED] | price-list |
+| **TOTAL** | | | **$X,XXX** | **$XX,XXX** | |
+
+### Notes
+- Region: [target region]
+- Commitment: [PAYG / Annual Flex / Universal Credits]
+- Assumptions: [list all assumptions]
+```
 
 ### Quality Gate 2
-- [ ] Every OCI service verified against official docs
-- [ ] Pricing sourced from oracle.com/cloud/price-list/ with dates
-- [ ] No blanket cost comparison claims
-- [ ] Architecture follows OCI Well-Architected Framework
+- [ ] Every OCI service verified against docs.oracle.com
+- [ ] Pricing from oracle.com/cloud/price-list/ with date
+- [ ] No "X times cheaper" claims without model-specific comparison
+- [ ] AI Blueprints decision tree consulted
+- [ ] Security architecture documented (IAM, encryption, network)
+- [ ] 3 tiers defined (Basic / Advanced / Premium)
+- [ ] Confidentiality: codename only, no client names
 
 ---
 
 ## Phase 3: VISUALIZE
 
-Create logo-free architecture diagrams.
+### 3.1 Generate Architecture Diagrams
 
-### Steps
+**Rules for ALL images:**
+- NO Oracle logos — text labels only ("Oracle Cloud", "OCI GenAI")
+- Oracle Red (#C74634) for accents
+- Dark background (#1A1A2E or similar) for professionalism
+- All service names match 2026 branding (26ai, not 23ai)
+- Minimum 1920x1080 resolution
 
-1. **Generate architecture diagram** — Use text labels only, NO Oracle logos
-2. **Apply Oracle brand colors** — Red #C74634 for accents, dark background
-3. **Generate draft first** — Use Flash/cheap model for initial draft
-4. **Refine** — Only use Pro/expensive model after draft approved
-5. **Create visual set** — Master architecture, user journey, data flow, tier comparison
+**Required Visual Set:**
+
+| # | Image | Audience | File Name |
+|---|-------|----------|-----------|
+| 1 | Master Architecture | Technical + Executive | architecture.png |
+| 2 | User Journey | Executive | user-journey.png |
+| 3 | Data Flow | Technical | data-flow.png |
+| 4 | Tier Comparison | Commercial | tier-comparison.png |
+
+### 3.2 Draft-Then-Refine
+
+1. Generate DRAFT with fast/cheap model first
+2. Review: correct service names? Readable? No logos?
+3. Refine prompt based on review
+4. Generate FINAL with quality model
+5. Save to `clients/[CODE]/deliverables/images/`
 
 ### Quality Gate 3
-- [ ] ZERO Oracle logos in any image
-- [ ] Service names match official branding (26ai not 23ai)
-- [ ] No spelling errors in diagrams
-- [ ] Architecture matches the SOLUTION-DESIGN.md
+- [ ] ZERO Oracle logos in any image (visual inspection)
+- [ ] Service names correct (Oracle AI Database 26ai, not 23ai)
+- [ ] No spelling errors
+- [ ] Readable at presentation size
+- [ ] Architecture matches SOLUTION-DESIGN.md
+- [ ] 4 images generated: architecture, journey, data-flow, tiers
 
 ---
 
 ## Phase 4: PROTOTYPE
 
-Build an interactive HTML prototype.
+### 4.1 Build Interactive Demo
 
-### Steps
+Create `clients/[CODE]/deliverables/prototype/index.html`:
 
-1. **Single HTML file** — No build tools, embedded CSS/JS
-2. **Simulate core workflow** — One main user flow with mock data
-3. **Add processing states** — Loading animations, progress bars
-4. **Label as PROTOTYPE** — Visible banner marking it as demo
-5. **Oracle Red accents** — #C74634, dark theme
-6. **No real customer data** — All mock/synthetic
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[Solution Name] - Prototype</title>
+  <style>
+    :root {
+      --oracle-red: #C74634;
+      --bg-dark: #1A1A2E;
+      --bg-card: #16213E;
+      --text: #E8E8E8;
+      --text-muted: #8892B0;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+           background: var(--bg-dark); color: var(--text); }
+    /* PROTOTYPE BANNER */
+    .proto-banner {
+      background: var(--oracle-red);
+      color: white; text-align: center;
+      padding: 8px; font-size: 14px; font-weight: 600;
+    }
+    /* Add your prototype styles here */
+  </style>
+</head>
+<body>
+  <div class="proto-banner">PROTOTYPE — For Demonstration Purposes Only</div>
+  <!-- Build your interactive demo here -->
+  <!-- Requirements:
+    - One core workflow, end-to-end
+    - Mock data (realistic but synthetic)
+    - Loading/processing states
+    - AI insights panel (simulated)
+    - Oracle Red accents
+    - No real customer data
+  -->
+  <script>
+    // Prototype JavaScript
+    // Simulate API calls with setTimeout
+    // Use mock data arrays for search results
+  </script>
+</body>
+</html>
+```
+
+### 4.2 Prototype Checklist
+- Single HTML file (no build tools, no npm)
+- Embedded CSS and JS
+- One core user workflow working end-to-end
+- Loading animations for "AI processing" steps
+- Mock data that's realistic but obviously synthetic
+- PROTOTYPE banner always visible
+- Oracle Red (#C74634) accent color
+- Works standalone (double-click to open in browser)
 
 ### Quality Gate 4
 - [ ] Core interaction works end-to-end
-- [ ] Processing states visible
+- [ ] Loading/processing states visible
+- [ ] No broken buttons or dead links
 - [ ] PROTOTYPE banner displayed
 - [ ] No real customer data
+- [ ] Opens standalone in browser (no server needed)
 
 ---
 
 ## Phase 5: DELIVER
 
-Package everything for customer presentation.
+### 5.1 Folder Structure
 
-### Steps
+Organize deliverables:
 
-1. **Organize folder structure:**
-   ```
-   clients/[CODE]/
-     SOLUTION-DESIGN.md
-     deliverables/
-       images/ (architecture.png, user-journey.png, data-flow.png)
-       prototype/ (index.html)
-       docs/ (DISCOVERY.md, BOM.md)
-     README.md (codename only)
-   ```
-2. **Confidentiality audit** — Search all files for real customer names (must find zero)
-3. **README check** — Contains ONLY: status, role, codename. No industry or scope details.
-4. **Pricing verification** — All BOM items sourced with dates
+```
+clients/[CODE]/
+├── SOLUTION-DESIGN.md                # Full SDD (use /55-sdd-generator.md)
+├── README.md                         # Codename + status ONLY
+└── deliverables/
+    ├── images/
+    │   ├── architecture.png          # Master architecture
+    │   ├── user-journey.png          # Executive flow
+    │   ├── data-flow.png             # Technical detail
+    │   └── tier-comparison.png       # Commercial comparison
+    ├── prototype/
+    │   └── index.html                # Interactive demo
+    └── docs/
+        ├── DISCOVERY.md              # Phase 1 output
+        └── BOM.md                    # Pricing by tier
+```
+
+### 5.2 Confidentiality Audit
+
+Run `/60-confidentiality-audit.md` before delivery. Or manually verify:
+
+```bash
+# Search for potential leaks in deliverables
+# Replace [CUSTOMER_NAME] with the actual name from conversation
+grep -ri "[CUSTOMER_NAME]" clients/[CODE]/
+
+# Verify README has codename only
+cat clients/[CODE]/README.md
+
+# Check git won't commit deliverables
+git status clients/[CODE]/
+# deliverables/ should NOT appear as tracked
+```
+
+### 5.3 README Template
+
+The ONLY committable file per client:
+
+```markdown
+# Project [CODE]
+
+| Field | Value |
+|-------|-------|
+| Status | Active |
+| Role | AI/Cloud Architecture |
+| Started | [Month Year] |
+```
+
+Nothing else. No industry, no scope, no customer details.
 
 ### Quality Gate 5
-- [ ] All files in correct structure
-- [ ] README has codename only
-- [ ] Images are logo-free
-- [ ] Prototype loads standalone
-- [ ] BOM pricing verified
-- [ ] McKinsey-quality presentation? Yes/No
+- [ ] All files in correct folder structure
+- [ ] README has codename only (no industry, no scope)
+- [ ] Images are logo-free (final visual inspection)
+- [ ] Prototype opens standalone in browser
+- [ ] BOM prices verified with dates and sources
+- [ ] Confidentiality audit PASSED
+- [ ] Would McKinsey present this to a Fortune 500 CEO? Yes/No
 
 ---
 
-## Confidentiality Reminder
+## Anti-Patterns
 
-Throughout ALL phases:
-- Use codenames only (A, B, E, K, O, P, R, V)
-- Never persist client context to committed files
-- Research goes to generic topics, not codename-linked folders
-- Solution names are generic or codename-based
+| Don't | Do Instead |
+|-------|-----------|
+| Skip discovery, jump to architecture | Always validate requirements first |
+| Use memorized pricing | Verify at oracle.com/cloud/price-list/ every time |
+| Include Oracle logos in images | Text labels only, Oracle Red accents |
+| Put client details in README | Codename + status only, everything else in deliverables/ |
+| Build complex prototype with build tools | Single HTML file, embedded CSS/JS |
+| Say "OCI is 80x cheaper" | Cite specific model comparison with source |
+| Deliver without confidentiality audit | Run /60-confidentiality-audit.md before every delivery |
+| Skip tiers, build one-size-fits-all | Always define Basic / Advanced / Premium |
