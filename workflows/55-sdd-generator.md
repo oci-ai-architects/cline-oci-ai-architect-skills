@@ -305,6 +305,29 @@ Generate `clients/[CODE]/SOLUTION-DESIGN.md` with the following 8 sections.
 - Include all 3 tiers
 - Note commitment type (PAYG vs Annual Flex — significant discount difference)
 
+### Baseline BOM Example: AI Document Intelligence (Basic Tier)
+
+> **REFERENCE ONLY.** Always re-verify at [oracle.com/cloud/price-list](https://www.oracle.com/cloud/price-list/).
+> Prices verified: 2026-02-09.
+
+| Service | Shape/Config | Qty | Unit Price | Monthly ($) | Annual ($) |
+|---------|-------------|-----|-----------|-------------|------------|
+| OCI GenAI | Cohere Command A (input) | 30M tok/mo | $0.03/1M tok | $0.90 | $10.80 |
+| OCI GenAI | Cohere Command A (output) | 10M tok/mo | $0.15/1M tok | $1.50 | $18.00 |
+| OCI GenAI | Cohere Embed 4 | 50M tok/mo | $0.0001/1M tok | $0.01 | $0.06 |
+| AI Database 26ai | Autonomous, 4 ECPU + 1 TB | 1 | ~$0.03/GB stor/mo | ~$340 | ~$4,080 |
+| Compute | VM.Standard.E5.Flex (2 OCPU) | 1 | $0.0839/OCPU/hr | ~$122 | ~$1,464 |
+| Object Storage | Standard, 500 GB | 1 | $0.0255/GB/mo | $12.75 | $153.00 |
+| Load Balancer | Flexible, 100 Mbps | 1 | $0.0255/hr + BW | ~$25 | ~$300 |
+| Networking | VCN + NAT + Service GW | 1 | Per-resource | ~$15 | ~$180 |
+| **TOTAL (Basic)** | | | | **~$517** | **~$6,206** |
+
+**Key unit prices to anchor your estimates (verify before use):**
+- GenAI tokens: Cohere Command A $0.03/$0.15, Llama 405B $0.015/$0.075, Grok $0.05/$0.15 (input/output per 1M)
+- GPU shapes: A10 $0.20/GPU/hr, A100 $4.20/GPU/hr, H100 $4.87/GPU/hr
+- Object Storage: $0.0255/GB/mo, ADB Storage: $0.03/GB/mo
+- Annual Flex commitment: 30-60% savings vs PAYG
+
 ---
 
 ### Section 7: Risk Assessment
