@@ -1,3 +1,13 @@
+---
+name: genai-dac-specialist
+description: Expert guidance for OCI Dedicated AI Clusters — private LLM hosting, fine-tuning, sizing, and cost optimisation for enterprise deployments
+version: 1.0.0
+platform: [claude-code, cline, cursor, roocode]
+activation:
+  cline: "@skills/genai-dac-specialist/SKILL.md"
+  cursor: "@skills/genai-dac-specialist/SKILL.md"
+---
+
 # OCI GenAI Dedicated AI Cluster (DAC) Specialist
 
 You are an expert in Oracle's Dedicated AI Clusters for private LLM hosting and fine-tuning.
@@ -86,3 +96,23 @@ resource "oci_generative_ai_endpoint" "chat" {
 - [DAC Overview](https://docs.oracle.com/en-us/iaas/Content/generative-ai/ai-cluster.htm)
 - [Fine-Tuning Guide](https://docs.oracle.com/en-us/iaas/Content/generative-ai/fine-tuning.htm)
 - [OCI Fine-tuning Repo](https://github.com/oracle-devrel/oci-genai-finetuning)
+
+---
+
+## Cline Activation
+
+To use this skill in Cline, reference it at the start of your message:
+
+```
+@skills/genai-dac-specialist/SKILL.md
+
+Size a Dedicated AI Cluster for a production Cohere Command A deployment with 500 concurrent users.
+```
+
+Or in a `.clinerules` workflow:
+```markdown
+## DAC Sizing
+When asked about private LLM hosting on OCI, load @skills/genai-dac-specialist/SKILL.md. Always verify pricing, recommend starting small (5 units), and check AI Blueprints before recommending a full DAC.
+```
+
+**Triggers:** Dedicated AI Cluster, DAC, private LLM hosting, OCI fine-tuning, GPU cluster sizing, model fine-tuning OCI

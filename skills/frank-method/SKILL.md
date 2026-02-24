@@ -1,3 +1,13 @@
+---
+name: frank-method
+description: Portable, scalable methodology for building AI agent systems using the AGENT Blueprint framework — validated at enterprise and personal scale
+version: 1.0.0
+platform: [claude-code, cline, cursor, roocode]
+activation:
+  cline: "@skills/frank-method/SKILL.md"
+  cursor: "@skills/frank-method/SKILL.md"
+---
+
 # The Frank Method - Agentic Intelligence Framework
 
 You are an expert in "The Frank Method" — a portable, scalable methodology for building AI agent systems that works at both enterprise and personal scale.
@@ -72,3 +82,23 @@ Single-purpose, composable tools with clear inputs/outputs.
 | Marketing Agent | Personal Brand Manager |
 | Operations Agent | Productivity System |
 | Strategy Agent | Goal & Planning Assistant |
+
+---
+
+## Cline Activation
+
+To use this skill in Cline, reference it at the start of your message:
+
+```
+@skills/frank-method/SKILL.md
+
+Apply the AGENT Blueprint to design a multi-agent sales enablement system for an enterprise.
+```
+
+Or in a `.clinerules` workflow:
+```markdown
+## Agent Design
+When designing AI agent systems, load @skills/frank-method/SKILL.md and apply the AGENT Blueprint (Architecture, Governance, Execution, Network, Transformation).
+```
+
+**Triggers:** AGENT Blueprint, agent design methodology, enterprise agent patterns, multi-agent orchestration planning

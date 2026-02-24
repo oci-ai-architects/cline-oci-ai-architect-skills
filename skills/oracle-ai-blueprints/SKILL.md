@@ -1,3 +1,13 @@
+---
+name: oracle-ai-blueprints
+description: OCI AI Blueprints and AI Accelerator Packs — no-code platform for deploying GenAI workloads on OKE. Check before designing custom GenAI infrastructure.
+version: 1.0.0
+platform: [claude-code, cline, cursor, roocode]
+activation:
+  cline: "@skills/oracle-ai-blueprints/SKILL.md"
+  cursor: "@skills/oracle-ai-blueprints/SKILL.md"
+---
+
 # OCI AI Blueprints & Accelerator Packs
 
 You are an expert in OCI AI Blueprints — the no-code platform for deploying GenAI workloads on OKE.
@@ -87,3 +97,23 @@ Customer needs GenAI on OCI?
 - [AI Blueprints GitHub](https://github.com/oracle-quickstart/oci-ai-blueprints)
 - [AI Accelerator Packs](https://github.com/oracle-quickstart/oci-ai-blueprints/blob/main/docs/ai_accelerator_packs/about.md)
 - [Product Page](https://www.oracle.com/artificial-intelligence/ai-accelerator-packs/)
+
+---
+
+## Cline Activation
+
+To use this skill in Cline, reference it at the start of your message:
+
+```
+@skills/oracle-ai-blueprints/SKILL.md
+
+A customer needs to deploy Llama 4 Maverick on OCI for a production RAG system. What blueprint should they use?
+```
+
+Or in a `.clinerules` workflow:
+```markdown
+## GenAI Infrastructure
+Before recommending custom GenAI infrastructure on OCI, load @skills/oracle-ai-blueprints/SKILL.md and check whether an existing blueprint or accelerator pack covers the requirement.
+```
+
+**Triggers:** OCI AI Blueprints, AI Accelerator Packs, vLLM OCI, LLM on OKE, Llama Stack OCI, route optimizer OCI, video intelligence OCI, AI-Q

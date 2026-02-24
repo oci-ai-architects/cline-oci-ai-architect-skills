@@ -1,3 +1,13 @@
+---
+name: oracle-infogenius
+description: Enterprise-grade Oracle Cloud architecture visual generation — technically validated, brand-compliant, presentation-ready diagrams for customer engagements
+version: 1.0.0
+platform: [claude-code, cline, cursor, roocode]
+activation:
+  cline: "@skills/oracle-infogenius/SKILL.md"
+  cursor: "@skills/oracle-infogenius/SKILL.md"
+---
+
 # Oracle InfoGenius - AI Architect Visual Generation
 
 You generate enterprise-grade, technically-validated Oracle Cloud architecture visuals.
@@ -69,3 +79,23 @@ Data Sources → Processing → Embedding → Vector Store → Retrieval (incl. 
 
 **Reranking is RETRIEVAL, not orchestration.**
 **LLM generation is GENERATION, not orchestration.**
+
+---
+
+## Cline Activation
+
+To use this skill in Cline, reference it at the start of your message:
+
+```
+@skills/oracle-infogenius/SKILL.md
+
+Generate a Pro-quality OCI GenAI RAG architecture diagram for a healthcare document analysis system. Use the 3-tier enterprise standard.
+```
+
+Or in a `.clinerules` workflow:
+```markdown
+## Architecture Visuals
+When generating Oracle architecture diagrams, load @skills/oracle-infogenius/SKILL.md. Always validate service names, use correct brand colors, no Oracle logos, 3-tier enterprise standard.
+```
+
+**Triggers:** OCI architecture diagram, Oracle visual, architecture image, InfoGenius, OCI diagram generation, customer presentation visual

@@ -1,3 +1,13 @@
+---
+name: rag-expert
+description: Retrieval-Augmented Generation patterns on Oracle Cloud Infrastructure — embeddings, vector stores, hybrid search, reranking, and production RAG architecture
+version: 1.0.0
+platform: [claude-code, cline, cursor, roocode]
+activation:
+  cline: "@skills/rag-expert/SKILL.md"
+  cursor: "@skills/rag-expert/SKILL.md"
+---
+
 # RAG Expert for OCI
 
 You are an expert in Retrieval-Augmented Generation patterns on Oracle Cloud Infrastructure.
@@ -102,3 +112,23 @@ Always rerank with Cohere Rerank 3.5 for production quality.
 **Check OCI AI Blueprints first:**
 - Llama Stack blueprint includes vLLM + ChromaDB + Postgres + Jaeger
 - Repository: https://github.com/oracle-quickstart/oci-ai-blueprints
+
+---
+
+## Cline Activation
+
+To use this skill in Cline, reference it at the start of your message:
+
+```
+@skills/rag-expert/SKILL.md
+
+Design a production RAG system on OCI using Oracle AI Database 26ai for hybrid search, Cohere Embed 4 for embeddings, and Cohere Rerank 3.5. The use case is enterprise contract analysis.
+```
+
+Or in a `.clinerules` workflow:
+```markdown
+## RAG Architecture
+When designing RAG systems on OCI, load @skills/rag-expert/SKILL.md. Use the 3-tier diagram standard, always include reranking, prefer Oracle AI Database 26ai for hybrid search, and check AI Blueprints before building custom.
+```
+
+**Triggers:** RAG, retrieval-augmented generation, vector search OCI, embeddings OCI, hybrid search, Cohere Embed, Rerank 3.5, OCI RAG architecture

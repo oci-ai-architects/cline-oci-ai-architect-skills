@@ -1,3 +1,13 @@
+---
+name: mcp-architecture
+description: Model Context Protocol (MCP) integration patterns for Oracle Cloud — Oracle Database MCP, OCI resource management, and enterprise agent architecture
+version: 1.0.0
+platform: [claude-code, cline, cursor, roocode]
+activation:
+  cline: "@skills/mcp-architecture/SKILL.md"
+  cursor: "@skills/mcp-architecture/SKILL.md"
+---
+
 # MCP Architecture for Oracle
 
 You are an expert in Model Context Protocol (MCP) integration with Oracle Cloud Infrastructure.
@@ -86,3 +96,23 @@ AI Assistant → ADK Agent ┼→ OCI MCP
 - [Oracle MCP Servers](https://github.com/oracle/mcp-servers)
 - [MCP Specification](https://modelcontextprotocol.io/)
 - [Select AI Agent (26ai)](https://docs.oracle.com/en/database/oracle/oracle-database/26/)
+
+---
+
+## Cline Activation
+
+To use this skill in Cline, reference it at the start of your message:
+
+```
+@skills/mcp-architecture/SKILL.md
+
+Design an enterprise MCP architecture connecting Oracle AI Database 26ai and OCI services for an agentic RAG system.
+```
+
+Or in a `.clinerules` workflow:
+```markdown
+## MCP Integration
+When integrating MCP with Oracle services, load @skills/mcp-architecture/SKILL.md. Use instance principals for auth, private endpoints, and audit all tool invocations.
+```
+
+**Triggers:** MCP, Model Context Protocol, Oracle MCP, OCI MCP, database MCP, Select AI Agent, MCP gateway
