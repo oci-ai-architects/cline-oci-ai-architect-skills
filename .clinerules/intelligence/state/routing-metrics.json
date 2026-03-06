@@ -1,0 +1,63 @@
+{
+  "version": "1.0.0",
+  "runs": 3,
+  "mode_stats": {
+    "full": {
+      "runs": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "avg_quality": 4.633
+    }
+  },
+  "workflow_stats": {
+    "00-workflow-router": {
+      "runs": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "avg_quality": 4.633
+    },
+    "50-solution-design": {
+      "runs": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "avg_quality": 4.633
+    },
+    "55-sdd-generator": {
+      "runs": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "avg_quality": 4.633
+    },
+    "20-oci-rag-pipeline": {
+      "runs": 1,
+      "successes": 1,
+      "success_rate": 1.0,
+      "avg_quality": 4.5
+    },
+    "25-oci-agent-deployment": {
+      "runs": 1,
+      "successes": 1,
+      "success_rate": 1.0,
+      "avg_quality": 4.5
+    },
+    "35-oci-security-review": {
+      "runs": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "avg_quality": 4.633
+    },
+    "60-confidentiality-audit": {
+      "runs": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "avg_quality": 4.633
+    },
+    "30-oci-cost-estimation": {
+      "runs": 2,
+      "successes": 2,
+      "success_rate": 1.0,
+      "avg_quality": 4.7
+    }
+  },
+  "last_updated": "2026-02-12T15:45:16.414899+00:00"
+}
